@@ -1,0 +1,1 @@
+{"topics":[{"title":"Kubernetes","description":"apply resources","command":"kubectl apply -f <file>"},{"title":"Ollama","description":"","command":"ollama run deepseek-r1:14b"},{"title":"Vim","description":"","command":"vi"}]}
