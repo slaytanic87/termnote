@@ -163,12 +163,17 @@ pub struct TerminalUI {
 impl TerminalUI {
     pub fn new(topics: Vec<Topic>) -> Self {
         let item_height: usize = 1;
+        let scroll_state: ScrollbarState = if topics.len() > 1 {
+            ScrollbarState::new((topics.len() - 1) * item_height)
+        } else {
+            ScrollbarState::default()
+        };
         Self {
             exit: false,
             library_list: LibraryList {
                 topics: topics.clone(),
                 state: TableState::default(),
-                scroll_state: ScrollbarState::new((topics.len() - 1) * item_height),
+                scroll_state,
                 longest_item_lens: calc_len_constraint(&topics),
             },
             item_height,
