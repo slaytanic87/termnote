@@ -68,8 +68,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 } else {
                     "Invalid index number".to_string()
                 }
-            } else if let Some(tl) = title {
-                processor.remove_by_title(tl)
+            } else if let Some(tte) = title {
+                processor.remove_by_title(tte)
             } else {
                 "Error: Must provide either title or index".to_string()
             }
