@@ -1,5 +1,5 @@
 use crate::adapter::Topic;
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::layout::{Constraint, Layout, Margin};
 use ratatui::prelude::CrosstermBackend;
 use ratatui::style::{Color, Modifier, Style, Stylize};
@@ -191,7 +191,25 @@ impl TerminalUI {
     fn handle_events(&mut self) -> Result<(), Box<dyn Error>> {
         match event::read()? {
             Event::Key(event) if event.kind == KeyEventKind::Press => {
-                self.handle_key(event);
+                match event.code {
+                    KeyCode::Char('q') => {
+                        self.event = MenuEvent::None;
+                        self.exit = true;
+                    }
+                    KeyCode::Char('e') => {
+                        self.event = MenuEvent::Execute;
+                        self.handle_selected();
+                        self.exit = true;
+                    }
+                    KeyCode::Up => self.select_previous(),
+                    KeyCode::Down => self.select_next(),
+                    KeyCode::Enter => {
+                        self.event = MenuEvent::Display;
+                        self.handle_selected();
+                        self.exit = true;
+                    }
+                    _ => {}
+                }
             }
             _ => {}
         };
@@ -232,30 +250,5 @@ impl TerminalUI {
         if let Some(index) = &self.library_list.state.selected() {
             self.selected_cmd = self.library_list.topics[*index].command.to_string();
         };
-    }
-
-    fn handle_key(&mut self, key: KeyEvent) {
-        if key.kind != KeyEventKind::Press {
-            return;
-        }
-        match key.code {
-            KeyCode::Char('q') => {
-                self.event = MenuEvent::None;
-                self.exit = true;
-            }
-            KeyCode::Char('e') => {
-                self.event = MenuEvent::Execute;
-                self.handle_selected();
-                self.exit = true;
-            }
-            KeyCode::Up => self.select_previous(),
-            KeyCode::Down => self.select_next(),
-            KeyCode::Enter => {
-                self.event = MenuEvent::Display;
-                self.handle_selected();
-                self.exit = true;
-            }
-            _ => {}
-        }
     }
 }
