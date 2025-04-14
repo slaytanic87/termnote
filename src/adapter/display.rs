@@ -1,11 +1,11 @@
 use crate::adapter::Topic;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
-use ratatui::layout::{Constraint, Layout};
+use ratatui::layout::{Constraint, Layout, Margin};
 use ratatui::prelude::CrosstermBackend;
 use ratatui::style::{Color, Modifier, Style, Stylize};
 use ratatui::text::Text;
 use ratatui::widgets::{
-    Block, Borders, Cell, HighlightSpacing, Padding, Paragraph, Row, Table, TableState,
+    Block, Borders, Cell, HighlightSpacing, Padding, Paragraph, Row, ScrollbarState, Scrollbar, ScrollbarOrientation, Table, TableState
 };
 use ratatui::Frame;
 use ratatui::Terminal;
@@ -98,7 +98,10 @@ fn create_footer_info() -> Paragraph<'static> {
         )
 }
 
-fn create_scrollbar() {}
+fn create_scrollbar() -> Scrollbar<'static> {
+    Scrollbar::default().orientation(ScrollbarOrientation::VerticalRight)
+    .begin_symbol(None).end_symbol(None)
+}
 
 fn render_all_block(library_list: &mut LibraryList, frame: &mut Frame) {
     let [header_area, main_area] =
@@ -114,6 +117,11 @@ fn render_all_block(library_list: &mut LibraryList, frame: &mut Frame) {
     let (table, lib_list) = create_topic_table(library_list);
     frame.render_widget(create_title(), header_area);
     frame.render_stateful_widget(table, list_area, &mut lib_list.state);
+    let scroll_area = list_area.inner(Margin {
+        vertical: 1,
+        horizontal: 1,
+    });
+    frame.render_stateful_widget(create_scrollbar(), scroll_area, &mut lib_list.scroll_state);
     frame.render_widget(create_footer_info(), info_area);
     frame.render_widget(create_footer_selected_topic(lib_list), item_area);
 }
@@ -135,6 +143,7 @@ pub fn display_text(text: &str) {
 struct LibraryList {
     topics: Vec<Topic>,
     state: TableState,
+    scroll_state: ScrollbarState,
     longest_item_lens: (u16, u16),
 }
 pub enum MenuEvent {
@@ -146,19 +155,23 @@ pub enum MenuEvent {
 pub struct TerminalUI {
     exit: bool,
     library_list: LibraryList,
+    item_height: usize,
     pub selected_cmd: String,
     pub event: MenuEvent,
 }
 
 impl TerminalUI {
     pub fn new(topics: Vec<Topic>) -> Self {
+        let item_height: usize = 1;
         Self {
             exit: false,
             library_list: LibraryList {
                 topics: topics.clone(),
                 state: TableState::default(),
+                scroll_state: ScrollbarState::new((topics.len() - 1) * item_height),
                 longest_item_lens: calc_len_constraint(&topics),
             },
+            item_height,
             selected_cmd: "".to_string(),
             event: MenuEvent::None,
         }
@@ -186,11 +199,33 @@ impl TerminalUI {
     }
 
     fn select_next(&mut self) {
-        self.library_list.state.select_next();
+        let index = match self.library_list.state.selected() {
+            Some(idx) => {
+                if idx >= self.library_list.topics.len() - 1 {
+                    0
+                } else {
+                    idx + 1
+                }
+            }
+            None => 0,
+        };
+        self.library_list.state.select(Some(index));
+        self.library_list.scroll_state = self.library_list.scroll_state.position(index * self.item_height);
     }
 
     fn select_previous(&mut self) {
-        self.library_list.state.select_previous();
+        let index = match self.library_list.state.selected() {
+            Some(idx) => {
+                if idx == 0 {
+                    self.library_list.topics.len() - 1
+                } else {
+                    idx - 1
+                }
+            }
+            None => 0,
+        };
+        self.library_list.state.select(Some(index));
+        self.library_list.scroll_state = self.library_list.scroll_state.position(index * self.item_height);
     }
 
     fn handle_selected(&mut self) {
