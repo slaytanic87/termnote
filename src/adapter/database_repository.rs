@@ -27,21 +27,28 @@ pub struct ObjectDB {
 impl ObjectDB {
     pub fn init() -> Self {
         let home_dir_rs = dirs::home_dir();
-        if home_dir_rs.is_none() {
-            panic!("Could not find home directory");
-        }
 
-        let path_buf = home_dir_rs.unwrap();
+        let path_buf = match home_dir_rs {
+            Some(path) => path,
+            None => panic!("Could not find home directory"),
+        };
+
         let home_dir = path_buf.display().to_string();
         let result: Result<Library, Box<dyn Error>> = {
             let file_rs = File::open(format!("{}/{}", home_dir, FILE_PATH));
-            if let Ok(file) = file_rs {
-                let reader = BufReader::new(file);
-                let library = serde_json::from_reader(reader);
-                let library = library.unwrap();
-                Ok(library)
-            } else {
-                Err(format!("Could not open file cause: {}", file_rs.unwrap_err()).into())
+
+            match file_rs {
+                Ok(file) => {
+                    let reader = BufReader::new(file);
+                    let library = serde_json::from_reader(reader);
+                    if library.is_err() {
+                        panic!("Could not parse file cause: {}", library.err().unwrap());
+                    }
+                    Ok(library.unwrap())
+                }
+                Err(e) => {
+                    Err(format!("Could not open file cause: {}", e).into())
+                }
             }
         };
 
