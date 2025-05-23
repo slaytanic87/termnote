@@ -1,7 +1,7 @@
 use clap::{arg, ArgMatches, Command};
 use ratatui::prelude::CrosstermBackend;
 use ratatui::Terminal;
-use std::error::Error;
+use std::{error::Error};
 use std::io::Stdout;
 use termnote::{display_text, run_cmd, CRUDProcessor, MenuEvent, TerminalUI};
 
@@ -102,7 +102,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 _ => "".to_string(),
             }
         }
-        _ => unreachable!(),
+        _ => "Missing subcommand!".to_string(),
     };
     restore_terminal()?;
     if !message.is_empty() {
