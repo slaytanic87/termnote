@@ -87,7 +87,7 @@ fn create_topic_table(library_list: &mut LibraryList) -> (Table<'_>, &mut Librar
 }
 
 fn create_footer_info() -> Paragraph<'static> {
-    const INFO_TEXT: [&str; 1] = ["(q) quit | (↑) move up | (↓) move down | (e) execute command | (ENTER) display command"];
+    const INFO_TEXT: [&str; 1] = ["(q) quit | (↑) move up | (↓) move down | (e) execute command | (ENTER) return command"];
     Paragraph::new(Text::from_iter(INFO_TEXT))
         .style(Style::new().fg(Color::Blue).bg(Color::Black))
         .centered()
