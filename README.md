@@ -25,7 +25,7 @@ Options:
 **Compilation**:
 
 ```bash
-cargo build
+cargo build --release
 ```
 
 **Test your build**:
@@ -35,3 +35,12 @@ cargo build
 ```
 
 On default termnote is creating a ~/.termnote/db.json file in your home directory if not exists
+
+**Installation**:
+
+after the compilation move the binary ./target/release/termnote to /bin folder of your OS
+
+**Supported OS**:
+
+* MAC OSX
+* Linux

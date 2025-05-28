@@ -1,14 +1,14 @@
 use clap::{arg, ArgMatches, Command};
 use ratatui::prelude::CrosstermBackend;
 use ratatui::Terminal;
-use std::{error::Error};
+use std::error::Error;
 use std::io::Stdout;
 use termnote::{display_text, run_cmd, CRUDProcessor, MenuEvent, TerminalUI};
 
 fn cmd() -> Command {
     Command::new("termnote")
         .about("A terminal CLI tool to note the commands you run")
-        .author("Slaytanic")
+        .author("Slaytanic87")
         .subcommand(
             Command::new("add")
                 .about("Add a new command to the list")
@@ -19,6 +19,7 @@ fn cmd() -> Command {
         .subcommand(
             Command::new("update")
                 .about("Update a noted command")
+                .arg(arg!(-i --index <INDEX>))
                 .arg(arg!(-t --title <TITLE>))
                 .arg(arg!(-d --description <DESCRIPTION>))
                 .arg(arg!(-c --command <COMMAND>)),
@@ -75,30 +76,21 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
         Some(("update", sub_matches)) => {
-            let title: &str = sub_matches
-                .get_one::<String>("title")
-                .expect("Title is required");
-            let description: &str = sub_matches
-                .get_one::<String>("description")
-                .expect("Description is required");
-            let command: &str = sub_matches
-                .get_one::<String>("command")
-                .expect("Command is required");
-            processor.update(
-                title.to_string(),
-                description.to_string(),
-                command.to_string(),
-            )
+            let index_str: &String = sub_matches.get_one::<String>("index").expect("Index is required");
+            let title = sub_matches.get_one::<String>("title");
+            let description = sub_matches.get_one::<String>("description");
+            let command = sub_matches.get_one::<String>("command");
+            if let Ok(idx) = index_str.parse() {
+                processor.update(idx, title, description, command)
+            } else {
+                "Invalid index number".to_string()
+            }
         }
         Some(("list", _)) => {
             terminal_ui.menu_loop(&mut terminal)?;
             match terminal_ui.event {
-                 MenuEvent::Execute => {
-                    run_cmd(&terminal_ui.selected_cmd.to_owned())
-                }
-                MenuEvent::Display => {
-                    terminal_ui.selected_cmd
-                }
+                MenuEvent::Execute => run_cmd(&terminal_ui.selected_cmd.to_owned()),
+                MenuEvent::Display => terminal_ui.selected_cmd,
                 _ => "".to_string(),
             }
         }

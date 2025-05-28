@@ -5,7 +5,8 @@ use ratatui::prelude::CrosstermBackend;
 use ratatui::style::{Color, Modifier, Style, Stylize};
 use ratatui::text::Text;
 use ratatui::widgets::{
-    Block, Borders, Cell, HighlightSpacing, Padding, Paragraph, Row, ScrollbarState, Scrollbar, ScrollbarOrientation, Table, TableState
+    Block, Borders, Cell, HighlightSpacing, Padding, Paragraph, Row, Scrollbar,
+    ScrollbarOrientation, ScrollbarState, Table, TableState,
 };
 use ratatui::Frame;
 use ratatui::Terminal;
@@ -87,7 +88,8 @@ fn create_topic_table(library_list: &mut LibraryList) -> (Table<'_>, &mut Librar
 }
 
 fn create_footer_info() -> Paragraph<'static> {
-    const INFO_TEXT: [&str; 1] = ["(q) quit | (↑) move up | (↓) move down | (e) execute command | (ENTER) return command"];
+    const INFO_TEXT: [&str; 1] =
+        ["(q) quit | (↑) move up | (↓) move down | (e) execute command | (ENTER) return command"];
     Paragraph::new(Text::from_iter(INFO_TEXT))
         .style(Style::new().fg(Color::Blue).bg(Color::Black))
         .centered()
@@ -99,8 +101,10 @@ fn create_footer_info() -> Paragraph<'static> {
 }
 
 fn create_scrollbar() -> Scrollbar<'static> {
-    Scrollbar::default().orientation(ScrollbarOrientation::VerticalRight)
-    .begin_symbol(None).end_symbol(None)
+    Scrollbar::default()
+        .orientation(ScrollbarOrientation::VerticalRight)
+        .begin_symbol(None)
+        .end_symbol(None)
 }
 
 fn render_all_block(library_list: &mut LibraryList, frame: &mut Frame) {
@@ -195,27 +199,25 @@ impl TerminalUI {
 
     fn handle_events(&mut self) -> Result<(), Box<dyn Error>> {
         match event::read()? {
-            Event::Key(event) if event.kind == KeyEventKind::Press => {
-                match event.code {
-                    KeyCode::Char('q') => {
-                        self.event = MenuEvent::None;
-                        self.exit = true;
-                    }
-                    KeyCode::Char('e') => {
-                        self.event = MenuEvent::Execute;
-                        self.handle_selected();
-                        self.exit = true;
-                    }
-                    KeyCode::Up => self.select_previous(),
-                    KeyCode::Down => self.select_next(),
-                    KeyCode::Enter => {
-                        self.event = MenuEvent::Display;
-                        self.handle_selected();
-                        self.exit = true;
-                    }
-                    _ => {}
+            Event::Key(event) if event.kind == KeyEventKind::Press => match event.code {
+                KeyCode::Char('q') => {
+                    self.event = MenuEvent::None;
+                    self.exit = true;
                 }
-            }
+                KeyCode::Char('e') => {
+                    self.event = MenuEvent::Execute;
+                    self.handle_selected();
+                    self.exit = true;
+                }
+                KeyCode::Up => self.select_previous(),
+                KeyCode::Down => self.select_next(),
+                KeyCode::Enter => {
+                    self.event = MenuEvent::Display;
+                    self.handle_selected();
+                    self.exit = true;
+                }
+                _ => {}
+            },
             _ => {}
         };
         Ok(())
@@ -233,7 +235,10 @@ impl TerminalUI {
             None => 0,
         };
         self.library_list.state.select(Some(index));
-        self.library_list.scroll_state = self.library_list.scroll_state.position(index * self.item_height);
+        self.library_list.scroll_state = self
+            .library_list
+            .scroll_state
+            .position(index * self.item_height);
     }
 
     fn select_previous(&mut self) {
@@ -248,7 +253,10 @@ impl TerminalUI {
             None => 0,
         };
         self.library_list.state.select(Some(index));
-        self.library_list.scroll_state = self.library_list.scroll_state.position(index * self.item_height);
+        self.library_list.scroll_state = self
+            .library_list
+            .scroll_state
+            .position(index * self.item_height);
     }
 
     fn handle_selected(&mut self) {

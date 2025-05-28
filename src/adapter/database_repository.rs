@@ -46,9 +46,7 @@ impl ObjectDB {
                     }
                     Ok(library.unwrap())
                 }
-                Err(e) => {
-                    Err(format!("Could not open file cause: {}", e).into())
-                }
+                Err(e) => Err(format!("Could not open file cause: {}", e).into()),
             }
         };
 
