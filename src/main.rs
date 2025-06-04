@@ -19,7 +19,7 @@ fn cmd() -> Command {
         .subcommand(
             Command::new("update")
                 .about("Update a noted command")
-                .arg(arg!(-i --index <INDEX>))
+                .arg(arg!(-i --index <INDEX> "(mandatory) Index of the command to update"))
                 .arg(arg!(-t --title <TITLE>))
                 .arg(arg!(-d --description <DESCRIPTION>))
                 .arg(arg!(-c --command <COMMAND>)),
@@ -28,7 +28,7 @@ fn cmd() -> Command {
             Command::new("remove")
                 .about("Remove a noted command by title or index")
                 .arg(arg!(-t --title <TITLE>))
-                .arg(arg!(-i --index <INDEX>)),
+                .arg(arg!(-i --index <INDEX> "(mandatory) Index of the command to remove")),
         )
         .subcommand(Command::new("list").about("List all noted commands"))
 }
