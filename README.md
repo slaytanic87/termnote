@@ -1,6 +1,6 @@
 # Termnote
 
-Simple Rust based terminal CLI tool to manage your commands which you save as notes
+Simple terminal CLI tool to manage your terminal commands which you can save as notes
 
 ![Termnote](Termnote_list_view.png)
 
