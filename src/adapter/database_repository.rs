@@ -13,6 +13,7 @@ pub struct Topic {
     pub title: String,
     pub description: String,
     pub command: String,
+    pub category: String,
 }
 
 #[derive(Deserialize, Serialize)]

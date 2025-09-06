@@ -14,7 +14,7 @@ use std::error::Error;
 use std::io::Stdout;
 use unicode_width::UnicodeWidthStr;
 
-fn calc_len_constraint(items: &[Topic]) -> (u16, u16) {
+fn calc_len_constraint(items: &[Topic]) -> (u16, u16, u16) {
     let title_len = items
         .iter()
         .map(|topic| topic.title.width())
@@ -26,8 +26,14 @@ fn calc_len_constraint(items: &[Topic]) -> (u16, u16) {
         .max()
         .unwrap_or(0);
 
+    let category_len = items
+        .iter()
+        .map(|topic| topic.category.width())
+        .max()
+        .unwrap_or(0);
+
     #[allow(clippy::cast_possible_truncation)]
-    (title_len as u16, command_len as u16)
+    (category_len as u16, title_len as u16, command_len as u16)
 }
 
 fn create_title() -> Paragraph<'static> {
@@ -48,7 +54,7 @@ fn create_topic_table(library_list: &mut LibraryList) -> (Table<'_>, &mut Librar
         .fg(Color::LightCyan);
 
     let selected_col_style = Style::default().fg(Color::Green);
-    let header = ["Index", "Title", "Command"]
+    let header = ["Index", "Category", "Title", "Command"]
         .into_iter()
         .map(Cell::from)
         .collect::<Row>()
@@ -61,6 +67,7 @@ fn create_topic_table(library_list: &mut LibraryList) -> (Table<'_>, &mut Librar
         .map(|(index, topic)| {
             [
                 Cell::from(Text::from(index.to_string())),
+                Cell::from(Text::from(topic.category.clone())),
                 Cell::from(Text::from(topic.title.clone())),
                 Cell::from(Text::from(topic.command.clone())),
             ]
@@ -74,7 +81,8 @@ fn create_topic_table(library_list: &mut LibraryList) -> (Table<'_>, &mut Librar
             [
                 Constraint::Length(5),
                 Constraint::Length(library_list.longest_item_lens.0),
-                Constraint::Min(library_list.longest_item_lens.1),
+                Constraint::Length(library_list.longest_item_lens.1),
+                Constraint::Min(library_list.longest_item_lens.2),
             ],
         )
         .header(header)
@@ -109,11 +117,11 @@ fn create_scrollbar() -> Scrollbar<'static> {
 
 fn render_all_block(library_list: &mut LibraryList, frame: &mut Frame) {
     let [header_area, main_area] =
-        Layout::vertical([Constraint::Length(3), Constraint::Fill(3)]).areas(frame.area());
+        Layout::vertical([Constraint::Length(4), Constraint::Fill(3)]).areas(frame.area());
 
     let [list_area, info_area, item_area] = Layout::vertical([
         Constraint::Fill(1),
-        Constraint::Length(3),
+        Constraint::Length(4),
         Constraint::Fill(1),
     ])
     .areas(main_area);
@@ -148,7 +156,7 @@ struct LibraryList {
     topics: Vec<Topic>,
     state: TableState,
     scroll_state: ScrollbarState,
-    longest_item_lens: (u16, u16),
+    longest_item_lens: (u16, u16, u16),
 }
 pub enum MenuEvent {
     None,

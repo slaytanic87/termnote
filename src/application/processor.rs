@@ -16,11 +16,12 @@ impl CRUDProcessor {
         }
     }
 
-    pub fn add(&mut self, title: String, description: String, cmd: String) -> String {
+    pub fn add(&mut self, title: String, description: String, cmd: String, category: String) -> String {
         let topic_entry = Topic {
             title: title.clone(),
             description,
             command: cmd,
+            category,
         };
         let topic: Option<&Topic> = self
             .database

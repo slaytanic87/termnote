@@ -14,7 +14,8 @@ fn cmd() -> Command {
                 .about("Add a new command to the list")
                 .arg(arg!(-t --title <TITLE>))
                 .arg(arg!(-d --description <DESCRIPTION>))
-                .arg(arg!(-c --command <COMMAND>)),
+                .arg(arg!(-c --command <COMMAND>))
+                .arg(arg!(-k --category <CATEGORY>)),
         )
         .subcommand(
             Command::new("update")
@@ -54,10 +55,14 @@ fn main() -> Result<(), Box<dyn Error>> {
             let command: &str = sub_matches
                 .get_one::<String>("command")
                 .expect("Command is required");
+            let category: &str = sub_matches
+                .get_one::<String>("category")
+                .expect("Category is required");
             processor.add(
                 title.to_string(),
                 description.unwrap_or("").to_string(),
                 command.to_string(),
+                category.to_string(),
             )
         }
         Some(("remove", sub_matches)) => {
