@@ -1,19 +1,42 @@
 # Termnote
 
-Simple terminal CLI tool to manage your terminal commands which you can save as notes
+Simple terminal CLI tool to manage your terminal commands or urls which you can saved as notes and searching for them
 
 ![Termnote](Termnote_list_view.png)
 
-## Usage
+## Usage Commands
 
 ```bash
+A terminal CLI tool to note the commands you run
+
 Usage: termnote [COMMAND]
 
 Commands:
   add     Add a new command to the list
   update  Update a noted command
   remove  Remove a noted command by title or index
+  search  Search commands by title or description
   list    List all noted commands
+  url     Link notes
+  help    Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+```
+
+## Usage Links
+
+```bash
+Link notes
+
+Usage: termnote url [COMMAND]
+
+Commands:
+  list    List all noted links
+  add     Add a new link to the list
+  update  Update a noted link
+  remove  Remove a noted link by title or index
+  search  Search links by title
   help    Print this message or the help of the given subcommand(s)
 
 Options:

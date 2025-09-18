@@ -16,9 +16,15 @@ pub struct Topic {
     pub category: String,
 }
 
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Link {
+    pub title: String,
+    pub url: String,
+}
 #[derive(Deserialize, Serialize)]
 pub struct Library {
     pub topics: Vec<Topic>,
+    pub links: Vec<Link>,
 }
 
 pub struct ObjectDB {
@@ -66,7 +72,7 @@ impl ObjectDB {
         }
 
         let file_path: String = format!("{}/{}", home_dir, FILE_PATH);
-        let lib = Library { topics: Vec::new() };
+        let lib = Library { topics: Vec::new(), links: Vec::new() };
         if !Path::new(&file_path).exists() {
             let file_rs = File::create(format!("{}/{}", home_dir, FILE_PATH));
             if let Err(e) = file_rs {
