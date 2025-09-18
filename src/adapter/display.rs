@@ -187,7 +187,7 @@ fn render_all_topic_ui_blocks(library_list: &mut LibraryList, frame: &mut Frame)
         Layout::vertical([Constraint::Length(4), Constraint::Fill(3)]).areas(frame.area());
 
     let [list_area, info_area, item_area] = Layout::vertical([
-        Constraint::Percentage(70),
+        Constraint::Percentage(80),
         Constraint::Length(4),
         Constraint::Fill(1),
     ])
