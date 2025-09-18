@@ -61,7 +61,7 @@ On default termnote is creating a ~/.termnote/db.json file in your home director
 
 **Installation**:
 
-after the compilation move the binary ./target/release/termnote to /bin folder of your OS
+after the compilation move the binary ./target/release/tn to /bin folder of your OS
 
 **Supported OS**:
 
