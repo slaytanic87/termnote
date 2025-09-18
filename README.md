@@ -9,7 +9,7 @@ Simple terminal CLI tool to manage your terminal commands or urls which you can 
 ```bash
 A terminal CLI tool to note the commands you run
 
-Usage: termnote [COMMAND]
+Usage: tn [COMMAND]
 
 Commands:
   add     Add a new command to the list
@@ -29,7 +29,7 @@ Options:
 ```bash
 Link notes
 
-Usage: termnote url [COMMAND]
+Usage: tn url [COMMAND]
 
 Commands:
   list    List all noted links

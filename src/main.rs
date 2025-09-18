@@ -6,8 +6,8 @@ use std::io::Stdout;
 use termnote::{display_text, run_cmd, CRUDProcessor, MenuEvent, TerminalUI};
 
 fn cmd() -> Command {
-    Command::new("termnote")
-        .about("A terminal CLI tool to note the commands you run")
+    Command::new("tn")
+        .about("A terminal CLI tool to note the commands and urls")
         .author("Slaytanic87")
         .subcommand(
             Command::new("add")
