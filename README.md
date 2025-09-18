@@ -54,7 +54,7 @@ cargo build --release
 **Test your build**:
 
 ```bash
-./target/debug/termnote list
+./target/debug/tn list
 ```
 
 On default termnote is creating a ~/.termnote/db.json file in your home directory if not exists
