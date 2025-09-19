@@ -137,7 +137,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             match sub_matches.subcommand() {
                 Some(("list", _)) => {
                     terminal_url_ui.menu_loop(&mut terminal)?;
-                    let selected_url = terminal_url_ui.selected_url;
+                    let selected_url:String = terminal_url_ui.selected_url;
                     if !selected_url.is_empty() {
                         selected_url
                     } else {

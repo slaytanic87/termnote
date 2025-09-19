@@ -235,7 +235,7 @@ fn create_footer_selected_topic(library_list: &LibraryList) -> Paragraph<'static
 }
 
 pub fn display_text(text: &str) {
-    println!("{}", text.to_string().green());
+    println!("{}", text.to_string().bright_blue());
 }
 
 struct LibraryUrlList {
