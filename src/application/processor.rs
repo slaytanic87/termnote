@@ -1,5 +1,6 @@
 use execute::{shell, Execute};
 use std::process::Stdio;
+use colored::Colorize;
 
 use crate::{Link, Topic, ObjectDB};
 
@@ -171,7 +172,7 @@ pub fn run_cmd(cmd_str: &str) -> String {
 pub fn deserialize_links(links: &Vec<&Link>) -> String {
     let mut links_output: String = "".to_string();
     links.iter().for_each(|link| {
-        links_output.push_str(format!("{} - {} \n", link.title, link.url).as_str());
+        links_output.push_str(format!("{} - {} \n", link.title, link.url.yellow()).as_str());
     });
     links_output
 }
@@ -182,7 +183,7 @@ pub fn deserialize_topics(topics: &Vec<&Topic>) -> String {
         topics_output.push_str(
             format!(
                 "{} - {} \n",
-                topic.title, topic.command
+                topic.title, topic.command.blue()
             )
             .as_str(),
         );
