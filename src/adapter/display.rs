@@ -13,6 +13,7 @@ use ratatui::Terminal;
 use std::error::Error;
 use std::io::Stdout;
 use unicode_width::UnicodeWidthStr;
+use colored::Colorize;
 
 fn calc_topic_len_constraint(items: &[Topic]) -> (u16, u16, u16) {
     let title_len = items
@@ -234,7 +235,7 @@ fn create_footer_selected_topic(library_list: &LibraryList) -> Paragraph<'static
 }
 
 pub fn display_text(text: &str) {
-    println!("{}", text);
+    println!("{}", text.to_string().green());
 }
 
 struct LibraryUrlList {
