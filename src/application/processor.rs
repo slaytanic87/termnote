@@ -183,7 +183,7 @@ pub fn deserialize_topics(topics: &Vec<&Topic>) -> String {
         topics_output.push_str(
             format!(
                 "{} - {} \n",
-                topic.title, topic.command.bright_blue()
+                topic.title, topic.command.bright_green()
             )
             .as_str(),
         );
