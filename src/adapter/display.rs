@@ -189,8 +189,8 @@ fn render_all_topic_ui_blocks(library_list: &mut LibraryList, frame: &mut Frame)
 
     let [list_area, info_area, item_area] = Layout::vertical([
         Constraint::Percentage(80),
-        Constraint::Length(4),
-        Constraint::Fill(1),
+        Constraint::Length(3),
+        Constraint::Length(1),
     ])
     .areas(main_area);
 
@@ -210,7 +210,7 @@ fn render_all_url_ui_blocks(library_list: &mut LibraryUrlList, frame: &mut Frame
     let [header_area, main_area] =
         Layout::vertical([Constraint::Length(4), Constraint::Fill(3)]).areas(frame.area());
 
-    let [list_area, info_area] = Layout::vertical([Constraint::Percentage(90), Constraint::Fill(1)])
+    let [list_area, info_area] = Layout::vertical([Constraint::Percentage(90), Constraint::Length(3)])
         .areas(main_area);
 
     let (table, lib_list) = create_url_table(library_list);
