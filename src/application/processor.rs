@@ -171,22 +171,22 @@ pub fn run_cmd(cmd_str: &str) -> String {
 
 pub fn deserialize_links(links: &Vec<&Link>) -> String {
     let mut links_output: String = "".to_string();
-    links.iter().for_each(|link| {
-        links_output.push_str(format!("{} - {} \n", link.title, link.url.yellow()).as_str());
+    for (index, link) in links.iter().enumerate() {
+        links_output.push_str(format!("{}: {} - {} \n", link.title, link.url.yellow()).as_str());
     });
     links_output
 }
 
 pub fn deserialize_topics(topics: &Vec<&Topic>) -> String {
     let mut topics_output: String = "".to_string();
-    topics.iter().for_each(|topic| {
+    for (index, topic) in topics.iter().enumerate() {
         topics_output.push_str(
             format!(
-                "{} - {} \n",
-                topic.title, topic.command.bright_green()
+                "{}: {} - {} \n",
+                index, topic.title, topic.command.bright_green()
             )
             .as_str(),
         );
-    });
+    };
     topics_output
 }
