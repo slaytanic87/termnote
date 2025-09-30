@@ -129,12 +129,13 @@ impl CRUDProcessor {
         "Success: Removed topic".to_string()
     }
 
-    pub fn search_by_title_or_description(&self, query: &str) -> Vec<&Topic> {
+    pub fn search_by_title_or_description(&self, query: &str) -> Vec<(u16, &Topic)> {
         self.database
             .library
             .topics
-            .iter()
-            .filter(|topic| topic.title.to_lowercase().contains(&query.to_lowercase()) || topic.description.to_lowercase().contains(&query.to_lowercase()))
+            .iter().enumerate()
+            .filter(|(_, topic)| topic.title.to_lowercase().contains(&query.to_lowercase()) || topic.description.to_lowercase().contains(&query.to_lowercase()))
+            .map(|(index, topic)| (index as u16, topic))
             .collect()
     }
 
@@ -149,13 +150,13 @@ impl CRUDProcessor {
         "Success: Removed link".to_string()
     }
 
-    pub fn search_links_by_title(&self, query: &str) -> Vec<&Link> {
+    pub fn search_links_by_title(&self, query: &str) -> Vec<(u16, &Link)> {
         self.database
             .library
             .links
-            .iter()
-            .filter(|link| link.title.to_lowercase().contains(&query.to_lowercase()))
-            .collect()
+            .iter().enumerate()
+            .filter(|(_, link)| link.title.to_lowercase().contains(&query.to_lowercase()))
+            .map(|(index, link)| (index as u16, link)).collect()
     }
 }
 
@@ -169,17 +170,17 @@ pub fn run_cmd(cmd_str: &str) -> String {
     String::from_utf8(output_rs.unwrap().stdout).unwrap()
 }
 
-pub fn deserialize_links(links: &Vec<&Link>) -> String {
+pub fn deserialize_links(links: &Vec<(u16, &Link)>) -> String {
     let mut links_output: String = "".to_string();
-    for (index, link) in links.iter().enumerate() {
-        links_output.push_str(format!("{}: {} - {} \n", link.title, link.url.yellow()).as_str());
-    });
+    for (index, link) in links.iter() {
+        links_output.push_str(format!("{}: {} - {} \n", index, link.title, link.url.yellow()).as_str());
+    };
     links_output
 }
 
-pub fn deserialize_topics(topics: &Vec<&Topic>) -> String {
+pub fn deserialize_topics(topics: &Vec<(u16, &Topic)>) -> String {
     let mut topics_output: String = "".to_string();
-    for (index, topic) in topics.iter().enumerate() {
+    for (index, topic) in topics.iter() {
         topics_output.push_str(
             format!(
                 "{}: {} - {} \n",
