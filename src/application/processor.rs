@@ -1,8 +1,8 @@
+use colored::Colorize;
 use execute::{shell, Execute};
 use std::process::Stdio;
-use colored::Colorize;
 
-use crate::{Link, Topic, ObjectDB};
+use crate::{Link, ObjectDB, Topic};
 
 pub struct CRUDProcessor {
     pub database: ObjectDB,
@@ -37,7 +37,13 @@ impl CRUDProcessor {
         "Success: Added link".to_string()
     }
 
-    pub fn add(&mut self, title: String, description: String, cmd: String, category: String) -> String {
+    pub fn add(
+        &mut self,
+        title: String,
+        description: String,
+        cmd: String,
+        category: String,
+    ) -> String {
         let topic_entry = Topic {
             title: title.clone(),
             description,
@@ -66,12 +72,13 @@ impl CRUDProcessor {
         title: Option<&String>,
         description: Option<&String>,
         cmd: Option<&String>,
+        category: Option<&String>,
     ) -> String {
         if index >= self.database.library.topics.len() {
             return "Error: Could not find topic".to_string();
         }
 
-        if title.is_none() && description.is_none() && cmd.is_none() {
+        if title.is_none() && description.is_none() && cmd.is_none() && category.is_none() {
             return "Error: No fields to update".to_string();
         }
 
@@ -84,6 +91,9 @@ impl CRUDProcessor {
         }
         if let Some(new_command) = cmd {
             topic.command = new_command.to_string();
+        }
+        if let Some(new_category) = category {
+            topic.category = new_category.to_string();
         }
         if self.database.save().is_err() {
             return "Error: Could not update the database".to_string();
@@ -129,12 +139,23 @@ impl CRUDProcessor {
         "Success: Removed topic".to_string()
     }
 
-    pub fn search_by_title_or_description(&self, query: &str) -> Vec<(u16, &Topic)> {
+    pub fn search_by_title_description_category(&self, query: &str) -> Vec<(u16, &Topic)> {
         self.database
             .library
             .topics
-            .iter().enumerate()
-            .filter(|(_, topic)| topic.title.to_lowercase().contains(&query.to_lowercase()) || topic.description.to_lowercase().contains(&query.to_lowercase()))
+            .iter()
+            .enumerate()
+            .filter(|(_, topic)| {
+                topic.title.to_lowercase().contains(&query.to_lowercase())
+                    || topic
+                        .description
+                        .to_lowercase()
+                        .contains(&query.to_lowercase())
+                    || topic
+                        .category
+                        .to_lowercase()
+                        .contains(&query.to_lowercase())
+            })
             .map(|(index, topic)| (index as u16, topic))
             .collect()
     }
@@ -154,9 +175,11 @@ impl CRUDProcessor {
         self.database
             .library
             .links
-            .iter().enumerate()
+            .iter()
+            .enumerate()
             .filter(|(_, link)| link.title.to_lowercase().contains(&query.to_lowercase()))
-            .map(|(index, link)| (index as u16, link)).collect()
+            .map(|(index, link)| (index as u16, link))
+            .collect()
     }
 }
 
@@ -173,8 +196,9 @@ pub fn run_cmd(cmd_str: &str) -> String {
 pub fn deserialize_links(links: &Vec<(u16, &Link)>) -> String {
     let mut links_output: String = "".to_string();
     for (index, link) in links.iter() {
-        links_output.push_str(format!("{}: {} - {} \n", index, link.title, link.url.yellow()).as_str());
-    };
+        links_output
+            .push_str(format!("{}: {} - {} \n", index, link.title, link.url.yellow()).as_str());
+    }
     links_output
 }
 
@@ -184,10 +208,12 @@ pub fn deserialize_topics(topics: &Vec<(u16, &Topic)>) -> String {
         topics_output.push_str(
             format!(
                 "{}: {} - {} \n",
-                index, topic.title, topic.command.bright_green()
+                index,
+                topic.title,
+                topic.command.bright_green()
             )
             .as_str(),
         );
-    };
+    }
     topics_output
 }

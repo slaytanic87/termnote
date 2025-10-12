@@ -1,4 +1,5 @@
 use crate::adapter::{Link, Topic};
+use colored::Colorize;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::layout::{Constraint, Layout, Margin};
 use ratatui::prelude::CrosstermBackend;
@@ -13,7 +14,6 @@ use ratatui::Terminal;
 use std::error::Error;
 use std::io::Stdout;
 use unicode_width::UnicodeWidthStr;
-use colored::Colorize;
 
 fn calc_topic_len_constraint(items: &[Topic]) -> (u16, u16, u16) {
     let title_len = items
@@ -38,7 +38,11 @@ fn calc_topic_len_constraint(items: &[Topic]) -> (u16, u16, u16) {
 }
 
 fn calc_link_len_constraint(items: &[Link]) -> (u16, u16) {
-    let title_len = items.iter().map(|link| link.title.width()).max().unwrap_or(0);
+    let title_len = items
+        .iter()
+        .map(|link| link.title.width())
+        .max()
+        .unwrap_or(0);
     let url_len = items.iter().map(|link| link.url.width()).max().unwrap_or(0);
 
     #[allow(clippy::cast_possible_truncation)]
@@ -69,20 +73,16 @@ fn create_url_table(library_list: &mut LibraryUrlList) -> (Table<'_>, &mut Libra
         .collect::<Row>()
         .style(header_style)
         .height(1);
-    let rows = library_list
-        .links
-        .iter()
-        .enumerate()
-        .map(|(index, link)| {
-            [
-                Cell::from(Text::from(index.to_string())),
-                Cell::from(Text::from(link.title.clone())),
-                Cell::from(Text::from(link.url.clone())),
-            ]
-            .into_iter()
-            .map(|cell| cell.style(Style::default().fg(Color::White)))
-            .collect::<Row>()
-        });
+    let rows = library_list.links.iter().enumerate().map(|(index, link)| {
+        [
+            Cell::from(Text::from(index.to_string())),
+            Cell::from(Text::from(link.title.clone())),
+            Cell::from(Text::from(link.url.clone())),
+        ]
+        .into_iter()
+        .map(|cell| cell.style(Style::default().fg(Color::White)))
+        .collect::<Row>()
+    });
     (
         Table::new(
             rows,
@@ -164,8 +164,7 @@ fn create_topic_footer_info() -> Paragraph<'static> {
 }
 
 fn create_url_footer_info() -> Paragraph<'static> {
-    const INFO_TEXT: [&str; 1] =
-        ["(q) quit | (↑) move up | (↓) move down | (ENTER) return URL"];
+    const INFO_TEXT: [&str; 1] = ["(q) quit | (↑) move up | (↓) move down | (ENTER) return URL"];
     Paragraph::new(Text::from_iter(INFO_TEXT))
         .style(Style::new().fg(Color::Blue).bg(Color::Black))
         .centered()
@@ -210,8 +209,8 @@ fn render_all_url_ui_blocks(library_list: &mut LibraryUrlList, frame: &mut Frame
     let [header_area, main_area] =
         Layout::vertical([Constraint::Length(4), Constraint::Fill(3)]).areas(frame.area());
 
-    let [list_area, info_area] = Layout::vertical([Constraint::Percentage(90), Constraint::Length(3)])
-        .areas(main_area);
+    let [list_area, info_area] =
+        Layout::vertical([Constraint::Percentage(90), Constraint::Length(3)]).areas(main_area);
 
     let (table, lib_list) = create_url_table(library_list);
     frame.render_widget(create_title(), header_area);
@@ -239,10 +238,10 @@ pub fn display_text(text: &str) {
 }
 
 struct LibraryUrlList {
-  links: Vec<Link>,
-  state: TableState,
-  scroll_state: ScrollbarState,
-  longest_item_lens: (u16, u16),
+    links: Vec<Link>,
+    state: TableState,
+    scroll_state: ScrollbarState,
+    longest_item_lens: (u16, u16),
 }
 
 struct LibraryList {

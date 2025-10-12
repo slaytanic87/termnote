@@ -72,7 +72,10 @@ impl ObjectDB {
         }
 
         let file_path: String = format!("{}/{}", home_dir, FILE_PATH);
-        let lib = Library { topics: Vec::new(), links: Vec::new() };
+        let lib = Library {
+            topics: Vec::new(),
+            links: Vec::new(),
+        };
         if !Path::new(&file_path).exists() {
             let file_rs = File::create(format!("{}/{}", home_dir, FILE_PATH));
             if let Err(e) = file_rs {
